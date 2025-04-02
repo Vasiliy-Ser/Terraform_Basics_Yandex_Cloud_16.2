@@ -1,198 +1,212 @@
-# Домашнее задание к занятию 16,2 «Основы Terraform. Yandex Cloud» - Падеев Василий
+# Домашнее задание к занятию 16.3 - «Управляющие конструкции в коде Terraform» - Падеев Василий
 
 
 ------
 
 ### Задание 1
-В качестве ответа всегда полностью прикладывайте ваш terraform-код в git.
-Убедитесь что ваша версия **Terraform** ~>1.8.4
 
-1. Изучите проект. В файле variables.tf объявлены переменные для Yandex provider.
-2. Создайте сервисный аккаунт и ключ. [service_account_key_file](https://terraform-provider.yandexcloud.net).
-4. Сгенерируйте новый или используйте свой текущий ssh-ключ. Запишите его открытую(public) часть в переменную **vms_ssh_public_root_key**.
-5. Инициализируйте проект, выполните код. Исправьте намеренно допущенные синтаксические ошибки. Ищите внимательно, посимвольно. Ответьте, в чём заключается их суть.
-6. Подключитесь к консоли ВМ через ssh и выполните команду ``` curl ifconfig.me```.
-Примечание: К OS ubuntu "out of a box, те из коробки" необходимо подключаться под пользователем ubuntu: ```"ssh ubuntu@vm_ip_address"```. Предварительно убедитесь, что ваш ключ добавлен в ssh-агент: ```eval $(ssh-agent) && ssh-add``` Вы познакомитесь с тем как при создании ВМ создать своего пользователя в блоке metadata в следующей лекции.;
-8. Ответьте, как в процессе обучения могут пригодиться параметры ```preemptible = true``` и ```core_fraction=5``` в параметрах ВМ.
+1. Изучите проект.
+2. Инициализируйте проект, выполните код. 
 
-В качестве решения приложите:
 
-- скриншот ЛК Yandex Cloud с созданной ВМ, где видно внешний ip-адрес;
-- скриншот консоли, curl должен отобразить тот же внешний ip-адрес;
-- ответы на вопросы.
+Приложите скриншот входящих правил «Группы безопасности» в ЛК Yandex Cloud .
 
-### Решение
+Решение:
 
-1. Ошибка заключается на указание несуществующей платформы (standart-v4). Выбираем платформу standard-v1 исходя из макс. возможных кол-ва ядер и базовой тактовой частоты процессора.  
+![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/1.1.png)
 
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/1.1.png) 
 
-Подключение по ssh
-![answe2](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/1.2.png)  
-![answer3](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/1.3.png)  
-
-2. preemptible = true (прерываемая ВМ), core_fraction = 5 (гарантированная доля vCPU). В процессе обучения достаточно часто хватает небольших вычислительных мощностей. Данные параметры экономят финансы.  
-
+------
 
 ### Задание 2
 
-1. Замените все хардкод-**значения** для ресурсов **yandex_compute_image** и **yandex_compute_instance** на **отдельные** переменные. К названиям переменных ВМ добавьте в начало префикс **vm_web_** .  Пример: **vm_web_name**.
-2. Объявите нужные переменные в файле variables.tf, обязательно указывайте тип переменной. Заполните их **default** прежними значениями из main.tf. 
-3. Проверьте terraform plan. Изменений быть не должно. 
+1. Создайте файл count-vm.tf. Опишите в нём создание двух **одинаковых** ВМ  web-1 и web-2 (не web-0 и web-1) с минимальными параметрами, используя мета-аргумент **count loop**. Назначьте ВМ созданную в первом задании группу безопасности.(как это сделать узнайте в документации провайдера yandex/compute_instance )
+2. Создайте файл for_each-vm.tf. Опишите в нём создание двух ВМ для баз данных с именами "main" и "replica" **разных** по cpu/ram/disk_volume , используя мета-аргумент **for_each loop**. Используйте для обеих ВМ одну общую переменную типа:
+```
+variable "each_vm" {
+  type = list(object({  vm_name=string, cpu=number, ram=number, disk_volume=number }))
+}
+```  
+При желании внесите в переменную все возможные параметры.
+4. ВМ из пункта 2.1 должны создаваться после создания ВМ из пункта 2.2.
+5. Используйте функцию file в local-переменной для считывания ключа ~/.ssh/id_rsa.pub и его последующего использования в блоке metadata, взятому из ДЗ 2.
+6. Инициализируйте проект, выполните код.
 
-### Решение
 
-![answer4](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/2.1.png)
+Решение:
 
+Создал файлы   [**count-vm.tf**](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/src/count-vm.tf) и [**for_each-vm.tf**](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/src/for_each-vm.tf) в которых описал создание ВМ. Переменные вынес в [**variables.tf**](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/src/variables.tf)
+
+![answer2](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/2.1.png)  
+![answer3](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/2.2.png)
+------
 
 ### Задание 3
 
-1. Создайте в корне проекта файл 'vms_platform.tf' . Перенесите в него все переменные первой ВМ.
-2. Скопируйте блок ресурса и создайте с его помощью вторую ВМ в файле main.tf: **"netology-develop-platform-db"** ,  ```cores  = 2, memory = 2, core_fraction = 20```. Объявите её переменные с префиксом **vm_db_** в том же файле ('vms_platform.tf').  ВМ должна работать в зоне "ru-central1-b"
-3. Примените изменения.
+1. Создайте 3 одинаковых виртуальных диска размером 1 Гб с помощью ресурса yandex_compute_disk и мета-аргумента count в файле **disk_vm.tf** .
+2. Создайте в том же файле **одиночную**(использовать count или for_each запрещено из-за задания №4) ВМ c именем "storage"  . Используйте блок **dynamic secondary_disk{..}** и мета-аргумент for_each для подключения созданных вами дополнительных дисков.
 
-### Решение
+Решение:
 
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/3.1.png)  
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/3.2.png)
+Создал файл [**disk_vm.tf**](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/src/disk_vm.tf)
 
+![answer4](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/3.1.png)  
+![answer5](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/3.2.png)
+
+------
 
 ### Задание 4
 
-1. Объявите в файле outputs.tf **один** output , содержащий: instance_name, external_ip, fqdn для каждой из ВМ в удобном лично для вас формате.(без хардкода!!!)
-2. Примените изменения.
+1. В файле ansible.tf создайте inventory-файл для ansible.
+Используйте функцию tepmplatefile и файл-шаблон для создания ansible inventory-файла из лекции.
+Готовый код возьмите из демонстрации к лекции [**demonstration2**](https://github.com/netology-code/ter-homeworks/tree/main/03/demo).
+Передайте в него в качестве переменных группы виртуальных машин из задания 2.1, 2.2 и 3.2, т. е. 5 ВМ.
+2. Инвентарь должен содержать 3 группы и быть динамическим, т. е. обработать как группу из 2-х ВМ, так и 999 ВМ.
+3. Добавьте в инвентарь переменную  [**fqdn**](https://cloud.yandex.ru/docs/compute/concepts/network#hostname).
+``` 
+[webservers]
+web-1 ansible_host=<внешний ip-адрес> fqdn=<полное доменное имя виртуальной машины>
+web-2 ansible_host=<внешний ip-адрес> fqdn=<полное доменное имя виртуальной машины>
 
-В качестве решения приложите вывод значений ip-адресов команды ```terraform output```.
+[databases]
+main ansible_host=<внешний ip-адрес> fqdn=<полное доменное имя виртуальной машины>
+replica ansible_host<внешний ip-адрес> fqdn=<полное доменное имя виртуальной машины>
 
-### Решение
-
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/4.1.png)
-
-
-### Задание 5
-
-1. В файле locals.tf опишите в **одном** local-блоке имя каждой ВМ, используйте интерполяцию ${..} с НЕСКОЛЬКИМИ переменными по примеру из лекции.
-2. Замените переменные внутри ресурса ВМ на созданные вами local-переменные.
-3. Примените изменения.
-
-### Решение
-
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/5.1.png)  
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/5.2.png)  
-
-
-### Задание 6
-
-1. Вместо использования трёх переменных  ".._cores",".._memory",".._core_fraction" в блоке  resources {...}, объедините их в единую map-переменную **vms_resources** и  внутри неё конфиги обеих ВМ в виде вложенного map(object).  
-   ```
-   пример из terraform.tfvars:
-   vms_resources = {
-     web={
-       cores=2
-       memory=2
-       core_fraction=5
-       hdd_size=10
-       hdd_type="network-hdd"
-       ...
-     },
-     db= {
-       cores=2
-       memory=4
-       core_fraction=20
-       hdd_size=10
-       hdd_type="network-ssd"
-       ...
-     }
-   }
-   ```
-3. Создайте и используйте отдельную map(object) переменную для блока metadata, она должна быть общая для всех ваших ВМ.
-   ```
-   пример из terraform.tfvars:
-   metadata = {
-     serial-port-enable = 1
-     ssh-keys           = "ubuntu:ssh-ed25519 AAAAC..."
-   }
-   ```  
-  
-5. Найдите и закоментируйте все, более не используемые переменные проекта.
-6. Проверьте terraform plan. Изменений быть не должно.
-
-### Решение
-
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/6.1.png)  
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/6.2.png)  
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/6.3.png)  
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/6.4.png)    
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/6.5.png)  
-
-------
-
-## Дополнительное задание (со звёздочкой*)
-
-**Настоятельно рекомендуем выполнять все задания со звёздочкой.**   
-Они помогут глубже разобраться в материале. Задания со звёздочкой дополнительные, не обязательные к выполнению и никак не повлияют на получение вами зачёта по этому домашнему заданию. 
-
-
-------
-### Задание 7*
-
-Изучите содержимое файла console.tf. Откройте terraform console, выполните следующие задания: 
-
-1. Напишите, какой командой можно отобразить **второй** элемент списка test_list.
-2. Найдите длину списка test_list с помощью функции length(<имя переменной>).
-3. Напишите, какой командой можно отобразить значение ключа admin из map test_map.
-4. Напишите interpolation-выражение, результатом которого будет: "John is admin for production server based on OS ubuntu-20-04 with X vcpu, Y ram and Z virtual disks", используйте данные из переменных test_list, test_map, servers и функцию length() для подстановки значений.
-
-**Примечание**: если не догадаетесь как вычленить слово "admin", погуглите: "terraform get keys of map"
-
-В качестве решения предоставьте необходимые команды и их вывод.
-
-### Решение
-
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/7.1.png)
-
-
-------
-
-### Задание 8*
-1. Напишите и проверьте переменную test и полное описание ее type в соответствии со значением из terraform.tfvars:
+[storage]
+storage ansible_host=<внешний ip-адрес> fqdn=<полное доменное имя виртуальной машины>
 ```
-test = [
-  {
-    "dev1" = [
-      "ssh -o 'StrictHostKeyChecking=no' ubuntu@62.84.124.117",
-      "10.0.1.7",
-    ]
-  },
-  {
-    "dev2" = [
-      "ssh -o 'StrictHostKeyChecking=no' ubuntu@84.252.140.88",
-      "10.0.2.29",
-    ]
-  },
-  {
-    "prod1" = [
-      "ssh -o 'StrictHostKeyChecking=no' ubuntu@51.250.2.101",
-      "10.0.1.30",
-    ]
-  },
+Пример fqdn: ```web1.ru-central1.internal```(в случае указания переменной hostname(не путать с переменной name)); ```fhm8k1oojmm5lie8i22a.auto.internal```(в случае отсутвия перменной hostname - автоматическая генерация имени,  зона изменяется на auto). нужную вам переменную найдите в документации провайдера или terraform console.
+4. Выполните код. Приложите скриншот получившегося файла. 
+
+Для общего зачёта создайте в вашем GitHub-репозитории новую ветку terraform-03. Закоммитьте в эту ветку свой финальный код проекта, пришлите ссылку на коммит.   
+**Удалите все созданные ресурсы**.
+
+Решение:
+
+Заново создавал ВМ, адреса изменились. Создал файлы [**ansible.tf**](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/src/ansible.tf) и [**hosts.tftpl**](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/src/hosts.tftpl) 
+
+![answer6](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/4.1.png)  
+![answer7](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/4.2.png)  
+![answer8]()
+
+
+------
+
+## Дополнительные задания (со звездочкой*)
+
+**Настоятельно рекомендуем выполнять все задания со звёздочкой.** Они помогут глубже разобраться в материале.   
+Задания со звёздочкой дополнительные, не обязательные к выполнению и никак не повлияют на получение вами зачёта по этому домашнему заданию. 
+
+### Задание 5* (необязательное)
+1. Напишите output, который отобразит ВМ из ваших ресурсов count и for_each в виде списка словарей :
+``` 
+[
+ {
+  "name" = 'имя ВМ1'
+  "id"   = 'идентификатор ВМ1'
+  "fqdn" = 'Внутренний FQDN ВМ1'
+ },
+ {
+  "name" = 'имя ВМ2'
+  "id"   = 'идентификатор ВМ2'
+  "fqdn" = 'Внутренний FQDN ВМ2'
+ },
+ ....
+...итд любое количество ВМ в ресурсе(те требуется итерация по ресурсам, а не хардкод) !!!!!!!!!!!!!!!!!!!!!
 ]
 ```
-2. Напишите выражение в terraform console, которое позволит вычленить строку "ssh -o 'StrictHostKeyChecking=no' ubuntu@62.84.124.117" из этой переменной.
+Приложите скриншот вывода команды ```terrafrom output```.
+
+Решение:
+
+![answer9](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/5.1.png)
+
+
 ------
 
-### Решение
+### Задание 6* (необязательное)
 
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/8.1.png)
+1. Используя null_resource и local-exec, примените ansible-playbook к ВМ из ansible inventory-файла.
+Готовый код возьмите из демонстрации к лекции [**demonstration2**](https://github.com/netology-code/ter-homeworks/tree/main/03/demo).
+3. Модифицируйте файл-шаблон hosts.tftpl. Необходимо отредактировать переменную ```ansible_host="<внешний IP-address или внутренний IP-address если у ВМ отсутвует внешний адрес>```.
+
+Для проверки работы уберите у ВМ внешние адреса(nat=false). Этот вариант используется при работе через bastion-сервер.
+Для зачёта предоставьте код вместе с основной частью задания.
+
+### Правила приёма работы
+
+В своём git-репозитории создайте новую ветку terraform-03, закоммитьте в эту ветку свой финальный код проекта. Ответы на задания и необходимые скриншоты оформите в md-файле в ветке terraform-03.
+
+В качестве результата прикрепите ссылку на ветку terraform-03 в вашем репозитории.
+
+Важно. Удалите все созданные ресурсы.
+
+### Задание 7* (необязательное)
+Ваш код возвращает вам следущий набор данных: 
+```
+> local.vpc
+{
+  "network_id" = "enp7i560tb28nageq0cc"
+  "subnet_ids" = [
+    "e9b0le401619ngf4h68n",
+    "e2lbar6u8b2ftd7f5hia",
+    "b0ca48coorjjq93u36pl",
+    "fl8ner8rjsio6rcpcf0h",
+  ]
+  "subnet_zones" = [
+    "ru-central1-a",
+    "ru-central1-b",
+    "ru-central1-c",
+    "ru-central1-d",
+  ]
+}
+```
+Предложите выражение в terraform console, которое удалит из данной переменной 3 элемент из: subnet_ids и subnet_zones.(значения могут быть любыми) Образец конечного результата:
+```
+> <некое выражение>
+{
+  "network_id" = "enp7i560tb28nageq0cc"
+  "subnet_ids" = [
+    "e9b0le401619ngf4h68n",
+    "e2lbar6u8b2ftd7f5hia",
+    "fl8ner8rjsio6rcpcf0h",
+  ]
+  "subnet_zones" = [
+    "ru-central1-a",
+    "ru-central1-b",
+    "ru-central1-d",
+  ]
+}
+
+Решение:
+
+Для удаления третьего элемента из массивов subnet_ids и subnet_zones в переменной local.vpc, можно использовать выражение: 
+
+```
+local.vpc = {
+  "network_id" = "enp7i560tb28nageq0cc"
+  "subnet_ids" = [for i, id in local.vpc.subnet_ids : id if i != 2]
+  "subnet_zones" = [for i, zone in local.vpc.subnet_zones : zone if i != 2]
+}
+```
 
 
-------
+```
+### Задание 8* (необязательное)
+Идентифицируйте и устраните намеренно допущенную в tpl-шаблоне ошибку. Обратите внимание, что terraform сам сообщит на какой строке и в какой позиции ошибка!
+```
+[webservers]
+%{~ for i in webservers ~}
+${i["name"]} ansible_host=${i["network_interface"][0]["nat_ip_address"] platform_id=${i["platform_id "]}}
+%{~ endfor ~}
+```
 
-### Задание 9*
+### Задание 9* (необязательное)
+Напишите  terraform выражения, которые сформируют списки:
+1. ["rc01","rc02","rc03","rc04",rc05","rc06",rc07","rc08","rc09","rc10....."rc99"] те список от "rc01" до "rc99"
+2. ["rc01","rc02","rc03","rc04",rc05","rc06","rc11","rc12","rc13","rc14",rc15","rc16","rc19"....."rc96"] те список от "rc01" до "rc96", пропуская все номера, заканчивающиеся на "0","7", "8", "9", за исключением "rc19"
 
-Используя инструкцию https://cloud.yandex.ru/ru/docs/vpc/operations/create-nat-gateway#tf_1, настройте для ваших ВМ nat_gateway. Для проверки уберите внешний IP адрес (nat=false) у ваших ВМ и проверьте доступ в интернет с ВМ, подключившись к ней через serial console. Для подключения предварительно через ssh измените пароль пользователя: ```sudo passwd ubuntu```
+Решение:
 
-### Решение
+![answer10](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/9.1.png)
 
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/9.1.png)
-![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/e1b71251dc66389d81b3c81b4d24e8dca6787b2e/png/9.2.png)

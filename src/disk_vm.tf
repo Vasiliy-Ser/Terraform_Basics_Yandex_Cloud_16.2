@@ -30,7 +30,7 @@ resource "yandex_compute_instance" "storage" {
     nat       = var.vm_params.nat
   }
 
-  # Подключаем диски через dynamic + for_each
+  # Connecting disks via dynamic + for_each
   dynamic "secondary_disk" {
     for_each = { for d in yandex_compute_disk.storage_disks : d.id => d }
     content {
