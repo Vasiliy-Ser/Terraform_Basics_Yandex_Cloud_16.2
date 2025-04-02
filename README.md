@@ -87,7 +87,7 @@ storage ansible_host=<внешний ip-адрес> fqdn=<полное доме�
 
 ![answer6](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/4.1.png)  
 ![answer7](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/5dd3a044de4b2a05f252c5e2345bcd71dc435cd3/png/4.2.png)  
-![answer8]()
+![answer8](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/8ae56dbc8e8f60ccad8a8f3ffcfcc0cf91f9b6da/png/4.3.png)
 
 
 ------
