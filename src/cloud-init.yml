@@ -1,0 +1,28 @@
+#cloud-config
+users:
+  - name: master
+    groups: sudo
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    ssh_authorized_keys:
+      ${vms_ssh_root_key}
+package_update: true
+package_upgrade: false
+packages:
+  - vim
+  - nginx
+
+# Run commands after setup
+runcmd:
+  # Update package list and install nginx
+  - apt-get update -y
+  - apt-get install -y nginx
+
+  # Start nginx service
+  - systemctl start nginx
+
+  # Enable nginx to start on boot
+  - systemctl enable nginx
+
+  # Check nginx status
+  - systemctl status nginx

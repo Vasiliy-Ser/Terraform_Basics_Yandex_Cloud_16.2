@@ -1,16 +1,18 @@
 output "vm_info" {
   value = {
-    web_instance = {
-      instance_name = yandex_compute_instance.platform.name
-      external_ip   = yandex_compute_instance.platform.network_interface.0.nat_ip_address
-      fqdn          = "${yandex_compute_instance.platform.name}.example.com"
-    },
-    db_instance = {
-      instance_name = yandex_compute_instance.db.name
-      external_ip   = yandex_compute_instance.db.network_interface.0.nat_ip_address
-      fqdn          = "${yandex_compute_instance.db.name}.example.com"
+    test-vm = {
+        external_ip_address = module.test-vm.external_ip_address
+        labels   = module.test-vm.labels
+        fqdn = module.test-vm.fqdn
     }
+    example-vm = {
+        external_ip_address = module.example-vm.external_ip_address
+        labels   = module.example-vm.labels
+        fqdn = module.example-vm.fqdn
   }
+  }
+}
 
-  description = "Information about instances including name, external IP, and FQDN."
+output "subnet_id" {
+  value = module.vpc.subnet_id
 }
