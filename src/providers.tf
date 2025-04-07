@@ -41,7 +41,7 @@ terraform {
     s3 = "https://storage.yandexcloud.net"
   }
 
-    dynamodb_table              = "tfstate-lock-develop"
+    dynamodb_table              = "tfstate-test"
   }
 
   # required_providers {
