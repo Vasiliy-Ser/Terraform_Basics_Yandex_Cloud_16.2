@@ -4,7 +4,7 @@ terraform {
       source = "yandex-cloud/yandex"
     }
   }
-  required_version = ">=1.5"
+  required_version = ">=1.8"
 }
 
 resource "yandex_vpc_network" "develop" {

@@ -12,6 +12,11 @@ terraform {
   required_providers {
     yandex = {
       source = "yandex-cloud/yandex"
+      version = "~> 0.140.1"
+    }
+    template = {
+      source  = "hashicorp/template"
+      version = "~> 2.2.0"  # Указываем версию, например, "~> 2.2"
     }
   }
   required_version = ">=1.8.4"
@@ -44,12 +49,6 @@ terraform {
     dynamodb_table              = "tfstate-test"
   }
 
-  # required_providers {
-  #   yandex = {
-  #     source  = "yandex-cloud/yandex"
-  #     version = "0.118.0"
-  #   }
-  # }
 }
 
 provider "yandex" {
