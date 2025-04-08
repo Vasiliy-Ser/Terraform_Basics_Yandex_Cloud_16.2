@@ -68,6 +68,10 @@
 ---
 Решение:
   
+  CKV_TF_1: Требуется, чтобы источники модулей использовали хеш коммита.
+
+  CKV_TF_2: Требуется, чтобы источники модулей использовали тег с номером версии.
+
  ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/3.1.png)   
  ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/3.2.png)   
  ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/3.3.png)   
