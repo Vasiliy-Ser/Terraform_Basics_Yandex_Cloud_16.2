@@ -68,7 +68,10 @@
 ---
 Решение:
   
- ![answer1]()   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/3.1.png)   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/3.2.png)   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/3.3.png)   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/3.4.png)   
 
 ------
 ### Задание 4
@@ -81,7 +84,9 @@
 ---yes
 Решение:
   
- ![answer1]()   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/4.1.png)   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/4.2.png)   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/4.3.png)   
 
 ## Дополнительные задания (со звёздочкой*)
 
@@ -114,7 +119,10 @@ variable "in_the_end_there_can_be_only_one" {
 ---
 Решение:
   
- ![answer1]()   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/5.1.png)   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/5.2.png)   
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/5.3.png)    
+ ![answer1](https://github.com/Vasiliy-Ser/Terraform_Basics_Yandex_Cloud_16.2/blob/aebab6d9cfa7cd57b4caad5cbb812e78b360ecf0/png/5.4.png)   
 
 ------
 ### Задание 6*
@@ -127,7 +135,7 @@ variable "in_the_end_there_can_be_only_one" {
 ---
 Решение:
   
- ![answer1]()   
+  
 
 ------
 ### Задание 7*
@@ -136,7 +144,7 @@ variable "in_the_end_there_can_be_only_one" {
 ---
 Решение:
   
- ![answer1]()   
+
 
 
 
