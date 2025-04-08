@@ -73,4 +73,53 @@ variable "vms_ssh_root_key" {
 # }
 
 
+variable "ip_address" {
+  type        = string
+  description = "IP-адрес"
+  default     = "192.168.0.1"
 
+  validation {
+    condition     = can(regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.ip_address))
+    error_message = "Значение должно быть корректным IP-адресом."
+  }
+}
+
+variable "ip_addresses_list" {
+  type        = list(string)
+  description = "Список IP-адресов"
+  default     = ["192.168.0.1", "1.1.1.1", "127.0.0.1"]
+
+  validation {
+    condition = alltrue([for ip in var.ip_addresses_list : can(regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", ip))])
+    error_message = "Все адреса в списке должны быть корректными IP-адресами."
+  }
+}
+
+variable "string_variable" {
+  description = "Любая строка, не содержащая символов верхнего регистра"
+  type        = string
+  default     = "what a nice day"
+
+  validation {
+    error_message = "Строка не должна содержать символов верхнего регистра"
+    condition     = !(var.string_variable != lower(var.string_variable))
+  }
+}
+
+variable "true-false" {
+  description = "Who is better Connor or Duncan?"
+  type = object({
+    Dunkan  = optional(bool)
+    Connor  = optional(bool)
+  })
+
+  default = {
+    Dunkan = false
+    Connor = true
+  }
+
+  validation {
+    error_message = "There can be only one MacLeod"
+    condition     = (var.true-false.Dunkan != var.true-false.Connor)
+  }
+}
